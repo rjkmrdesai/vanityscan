@@ -1480,7 +1480,7 @@
     .quick-chip{font-size:11px;padding:5px 10px;}
   }
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -2620,17 +2620,26 @@
     }
   });
 </script>
+
+<!-- ============================================ -->
+<!-- SAIKO BACKEND — Supabase + Search             -->
+<!-- ============================================ -->
 <script>
-  const supabase = window.supabase.createClient(
+  const supabaseClient = window.supabase.createClient(
     'https://umsgoqdmdqxxaxmubcdp.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVtc2dvcWRtZHF4eGF4bXViY2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NzkxOTksImV4cCI6MjA5MzM1NTE5OX0.cceprmYY9bWyMVbPgAT0VoM7WXqV6T0suRnus9mLMdU'
   );
 
+  let ALL_PRODUCTS = [];
+
+  // ============================================
+  // LOAD PRODUCTS FROM SUPABASE
+  // ============================================
   async function loadProducts() {
-    const { data: products, error } = await supabase
+    const { data: products, error } = await supabaseClient
       .from('products')
       .select(`
-        id, brand, name, category, size,
+        id, brand, name, category, size, is_trending, is_drop,
         prices (
           current_price,
           was_price,
@@ -2639,76 +2648,215 @@
         )
       `);
 
-    if (error) { 
-      console.error('Supabase error:', error); 
-      document.getElementById('loadingText').textContent = 'Error loading prices — check console';
-      return; 
-    }
-    if (!products || products.length === 0) {
-      console.warn('No products found in database');
-      document.getElementById('loadingText').textContent = 'No products in database yet';
+    if (error) {
+      console.error('Supabase error:', error);
       return;
     }
-    console.log('Products from DB:', products);
-    // Hide the loading bar once data arrives
+    if (!products || products.length === 0) {
+      console.warn('No products in database yet');
+      return;
+    }
+    console.log('✓ Products loaded from DB:', products);
+
+    // Hide loading status if it exists
     const loadingStatus = document.getElementById('loadingStatus');
     const loadingBar = document.getElementById('loadingBar');
     if (loadingStatus) loadingStatus.style.display = 'none';
     if (loadingBar) loadingBar.style.display = 'none';
+
+    ALL_PRODUCTS = products;
     renderProducts(products);
   }
 
+  // ============================================
+  // FUZZY MATCH — bigram similarity (0 to 1)
+  // ============================================
+  function fuzzyScore(query, target) {
+    if (!query || !target) return 0;
+    const q = query.toLowerCase().trim();
+    const t = target.toLowerCase().trim();
+    if (t.includes(q)) return 1;
+    if (q.length < 2) return 0;
+
+    const bigrams = (s) => {
+      const arr = [];
+      for (let i = 0; i < s.length - 1; i++) arr.push(s.slice(i, i + 2));
+      return arr;
+    };
+
+    const qBg = bigrams(q);
+    const tBg = bigrams(t);
+    if (qBg.length === 0 || tBg.length === 0) return 0;
+
+    let matches = 0;
+    const tCopy = [...tBg];
+    qBg.forEach(bg => {
+      const idx = tCopy.indexOf(bg);
+      if (idx !== -1) { matches++; tCopy.splice(idx, 1); }
+    });
+    return (2 * matches) / (qBg.length + tBg.length);
+  }
+
+  // ============================================
+  // SEARCH PRODUCTS (filter at 60%+ match)
+  // ============================================
+  function searchProducts(query) {
+    if (!query || query.trim() === '') {
+      renderProducts(ALL_PRODUCTS);
+      return;
+    }
+    const scored = ALL_PRODUCTS.map(p => {
+      const fullName = `${p.brand} ${p.name}`;
+      const score = Math.max(
+        fuzzyScore(query, fullName),
+        fuzzyScore(query, p.name),
+        fuzzyScore(query, p.brand)
+      );
+      return { product: p, score };
+    });
+    const matched = scored
+      .filter(s => s.score >= 0.6)
+      .sort((a, b) => b.score - a.score)
+      .map(s => s.product);
+
+    if (matched.length === 0) {
+      renderEmptyState(query);
+    } else {
+      renderProducts(matched);
+    }
+  }
+
+  // ============================================
+  // BUILD A SINGLE PRODUCT CARD
+  // ============================================
+  function buildCard(p, isTrendingTag = false) {
+    if (!p.prices || p.prices.length === 0) return null;
+    const sorted = [...p.prices].sort((a, b) => a.current_price - b.current_price);
+    const lowest = sorted[0];
+    const highest = sorted[sorted.length - 1];
+    const savings = highest.current_price - lowest.current_price;
+
+    const card = document.createElement('div');
+    card.className = 'product-card open';
+    card.innerHTML = `
+      <div class="product-summary">
+        <div class="product-info">
+          <div class="brand">${p.brand}${isTrendingTag ? ' <span style="font-size:10px;color:var(--accent);margin-left:8px;letter-spacing:1.5px;">TRENDING</span>' : ''}</div>
+          <h3>${p.name}</h3>
+          <div class="meta">
+            <span>${p.size || ''}</span>
+            ${p.size && p.category ? '<span class="dot">·</span>' : ''}
+            <span>${p.category || ''}</span>
+          </div>
+        </div>
+        <div class="product-price-summary">
+          <div class="from">From</div>
+          <div class="price">₹${lowest.current_price.toLocaleString('en-IN')}</div>
+          ${savings > 0 ? `<div class="save">↓ Save ₹${savings.toLocaleString('en-IN')} vs highest</div>` : ''}
+        </div>
+      </div>
+      <div class="retailer-list" style="padding:20px 32px;border-top:1px solid var(--line);">
+        ${sorted.map((price, i) => `
+          <a href="${price.affiliate_url}"
+             target="_blank" rel="noopener sponsored"
+             style="display:flex;justify-content:space-between;padding:14px 0;${i < sorted.length - 1 ? 'border-bottom:1px solid var(--line);' : ''}text-decoration:none;color:var(--ink);">
+            <span><strong>${price.retailers.name}</strong>${i === 0 ? ' <span style="color:var(--accent);font-size:11px;margin-left:8px;letter-spacing:1px;">LOWEST</span>' : ''}</span>
+            <span>₹${price.current_price.toLocaleString('en-IN')}
+              ${price.was_price && price.was_price > price.current_price ? `<s style="color:var(--ink-faint);margin-left:8px;">₹${price.was_price.toLocaleString('en-IN')}</s>` : ''}
+            </span>
+          </a>
+        `).join('')}
+      </div>
+    `;
+    return card;
+  }
+
+  // ============================================
+  // RENDER PRODUCTS INTO COMPARE SECTION
+  // ============================================
   function renderProducts(products) {
     const container = document.querySelector('#compare .section-inner');
     if (!container) return;
-
-    // Find existing product cards and remove them
-    container.querySelectorAll('.product-card').forEach(c => c.remove());
-
+    container.querySelectorAll('.product-card, .empty-state').forEach(c => c.remove());
     products.forEach(p => {
-      // Sort prices low to high
-      const sorted = [...p.prices].sort((a, b) => a.current_price - b.current_price);
-      const lowest = sorted[0];
-      const highest = sorted[sorted.length - 1];
-      const savings = highest.current_price - lowest.current_price;
-
-      const card = document.createElement('div');
-      card.className = 'product-card open';
-      card.innerHTML = `
-        <div class="product-summary">
-          <div class="product-info">
-            <div class="brand">${p.brand}</div>
-            <h3>${p.name}</h3>
-            <div class="meta">
-              <span>${p.size || ''}</span>
-              <span class="dot">·</span>
-              <span>${p.category || ''}</span>
-            </div>
-          </div>
-          <div class="product-price-summary">
-            <div class="from">From</div>
-            <div class="price">₹${lowest.current_price.toLocaleString('en-IN')}</div>
-            <div class="save">↓ Save ₹${savings.toLocaleString('en-IN')} vs highest</div>
-          </div>
-        </div>
-        <div class="retailer-list" style="padding:20px 32px;border-top:1px solid var(--line);">
-          ${sorted.map(price => `
-            <a href="${price.affiliate_url}"
-               target="_blank" rel="noopener sponsored"
-               style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink);">
-              <span><strong>${price.retailers.name}</strong></span>
-              <span>₹${price.current_price.toLocaleString('en-IN')}
-                ${price.was_price ? `<s style="color:var(--ink-faint);margin-left:8px;">₹${price.was_price.toLocaleString('en-IN')}</s>` : ''}
-              </span>
-            </a>
-          `).join('')}
-        </div>
-      `;
-      container.appendChild(card);
+      const card = buildCard(p);
+      if (card) container.appendChild(card);
     });
   }
 
-  loadProducts();
+  // ============================================
+  // EMPTY STATE — when search has no results
+  // ============================================
+  function renderEmptyState(query) {
+    const container = document.querySelector('#compare .section-inner');
+    if (!container) return;
+    container.querySelectorAll('.product-card, .empty-state').forEach(c => c.remove());
+
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.style.cssText = 'background:var(--cream);border:1px solid var(--line);border-radius:24px;padding:60px 40px;text-align:center;margin-bottom:32px;';
+    empty.innerHTML = `
+      <div style="font-size:56px;margin-bottom:16px;">✨</div>
+      <h3 style="font-family:var(--serif);font-size:28px;font-weight:500;margin:0 0 12px 0;color:var(--ink);">
+        We couldn't find "${query}"
+      </h3>
+      <p style="color:var(--ink-soft);max-width:480px;margin:0 auto 8px;line-height:1.6;">
+        Either it's not in our index yet, or the spelling is slightly off. Here's what's trending right now instead — chances are good your next favourite is below.
+      </p>
+      <p style="color:var(--ink-faint);font-size:13px;margin:16px 0 0 0;">
+        Want us to track this product? <a href="#alerts" style="color:var(--accent);text-decoration:underline;">Set a price alert</a> and we'll add it to our index.
+      </p>
+    `;
+    container.appendChild(empty);
+
+    const trending = ALL_PRODUCTS.filter(p => p.is_trending);
+    const fallback = trending.length > 0 ? trending : ALL_PRODUCTS.slice(0, 3);
+    fallback.forEach(p => {
+      const card = buildCard(p, true);
+      if (card) container.appendChild(card);
+    });
+  }
+
+  // ============================================
+  // WIRE UP THE SEARCH BAR
+  // ============================================
+  function setupSearch() {
+    const input = document.querySelector('.search-input');
+    const btn = document.getElementById('searchBtn');
+    if (!input || !btn) return;
+
+    const doSearch = () => {
+      searchProducts(input.value);
+      document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    btn.addEventListener('click', doSearch);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+    });
+
+    let typingTimer;
+    input.addEventListener('input', () => {
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        if (input.value.trim().length >= 2 || input.value.trim() === '') {
+          searchProducts(input.value);
+        }
+      }, 250);
+    });
+
+    document.querySelectorAll('.search-quick .quick-chip').forEach(chip => {
+      chip.addEventListener('click', e => {
+        e.preventDefault();
+        input.value = chip.textContent.trim();
+        doSearch();
+      });
+    });
+  }
+
+  // ─── INIT ───
+  loadProducts().then(setupSearch);
 </script>
+
 </body>
 </html>
