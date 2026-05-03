@@ -847,7 +847,19 @@
     width:100%;
     border-collapse:collapse;
     margin-top:16px;
+    table-layout:fixed;
   }
+  /* 5 columns evenly distributed: Retailer (28%) | Stock | Shipping | Price | Visit */
+  .retailer-table th:nth-child(1),
+  .retailer-table td:nth-child(1){width:32%;}
+  .retailer-table th:nth-child(2),
+  .retailer-table td:nth-child(2){width:14%;}
+  .retailer-table th:nth-child(3),
+  .retailer-table td:nth-child(3){width:18%;}
+  .retailer-table th:nth-child(4),
+  .retailer-table td:nth-child(4){width:18%;text-align:right;}
+  .retailer-table th:nth-child(5),
+  .retailer-table td:nth-child(5){width:18%;text-align:right;}
   .retailer-table thead th{
     text-align:left;
     padding:10px 12px;
@@ -1296,9 +1308,16 @@
     .alerts-grid{grid-template-columns:1fr;gap:40px;}
     .footer-grid{grid-template-columns:1fr 1fr;gap:32px;}
     .retailer-table thead th:nth-child(3),
-    .retailer-table thead th:nth-child(4),
-    .retailer-row td:nth-child(3),
-    .retailer-row td:nth-child(4){display:none;}
+    .retailer-row td:nth-child(3){display:none;}
+    /* Redistribute remaining 4 columns when Shipping is hidden on tablet */
+    .retailer-table th:nth-child(1),
+    .retailer-table td:nth-child(1){width:36%;}
+    .retailer-table th:nth-child(2),
+    .retailer-table td:nth-child(2){width:18%;}
+    .retailer-table th:nth-child(4),
+    .retailer-table td:nth-child(4){width:23%;}
+    .retailer-table th:nth-child(5),
+    .retailer-table td:nth-child(5){width:23%;}
   }
   @media (max-width:768px){
     .topbar-inner{padding:12px 16px;gap:12px;}
@@ -1479,6 +1498,94 @@
     .alerts-section h2{font-size:26px;}
     .quick-chip{font-size:11px;padding:5px 10px;}
   }
+  /* Hide hardcoded product cards on initial load — JS will replace with DB data */
+  #compare .product-card{display:none;}
+  #compare .product-card.from-db{display:block;}
+
+  /* Search suggestions dropdown */
+  .search-suggestions{
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-top:4px;
+    max-height:320px;
+    overflow-y:auto;
+    box-shadow:0 8px 24px rgba(43,24,16,0.08);
+    z-index:50;
+    display:none;
+  }
+  .search-suggestions.open{display:block;}
+  .suggestion-item{
+    padding:12px 16px;
+    cursor:pointer;
+    border-bottom:1px solid var(--line);
+    transition:background 0.15s;
+  }
+  .suggestion-item:last-child{border-bottom:none;}
+  .suggestion-item:hover,
+  .suggestion-item.active{background:#FFFCF8;}
+  .suggestion-item .sg-brand{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:3px;
+  }
+  .suggestion-item .sg-name{
+    font-size:14px;
+    color:var(--ink);
+    font-weight:500;
+  }
+  .suggestion-item .sg-meta{
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-top:2px;
+  }
+
+  /* Category grid (Browse by category mode) */
+  .category-mode{padding:8px 0;}
+  .category-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:12px;
+  }
+  .category-chip{
+    background:#FAF6F0;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 16px;
+    cursor:pointer;
+    transition:all 0.2s;
+    text-align:left;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .category-chip:hover{background:#FFF7ED;border-color:var(--brick);transform:translateY(-1px);}
+  .category-chip .cat-name{
+    font-family:'Fraunces',serif;
+    font-size:18px;
+    font-weight:500;
+    color:var(--ink);
+  }
+  .category-chip .cat-count{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.05em;
+  }
+
+  /* Disabled search button */
+  .search-btn:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+    pointer-events:none;
+  }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1518,51 +1625,54 @@
     <!-- THE TOOL — search-first -->
     <div class="search-card">
       <div class="search-tabs">
-        <button class="search-tab active">
+        <button class="search-tab active" data-tab="search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           Search product
         </button>
-        <button class="search-tab">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H1v3h8v3l3-3.5L9 10v1z"/><path d="M22 12h-7"/><path d="M15 4l7 8-7 8"/></svg>
-          Paste a link
-        </button>
-        <button class="search-tab">
+        <button class="search-tab" data-tab="category">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
           Browse by category
         </button>
       </div>
-      <div class="search-row">
-        <div class="search-field">
-          <label>Product, brand or shade</label>
-          <input class="search-input" type="text" placeholder="e.g. Charlotte Tilbury Pillow Talk, La Mer Crème, vitamin C serum" />
+
+      <!-- SEARCH MODE -->
+      <div class="search-mode" id="searchMode">
+        <div class="search-row">
+          <div class="search-field" style="position:relative;">
+            <label>Product, brand or shade</label>
+            <input class="search-input" type="text" placeholder="e.g. Charlotte Tilbury Pillow Talk, La Mer Crème, vitamin C serum" autocomplete="off" />
+            <div class="search-suggestions" id="searchSuggestions"></div>
+          </div>
+          <div class="search-field">
+            <label>Category</label>
+            <select class="search-select" id="categorySelect">
+              <option value="">All categories</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label>Max budget</label>
+            <select class="search-select" id="budgetSelect">
+              <option value="">Any price</option>
+              <option value="1000">Under ₹1,000</option>
+              <option value="2500">Under ₹2,500</option>
+              <option value="5000">Under ₹5,000</option>
+              <option value="10000">Under ₹10,000</option>
+            </select>
+          </div>
+          <button class="search-btn" id="searchBtn" type="button" disabled>
+            Find best price
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
         </div>
-        <div class="search-field">
-          <label>Category</label>
-          <select class="search-select">
-            <option>All categories</option>
-            <option>Skincare</option>
-            <option>Makeup</option>
-            <option>Fragrance</option>
-            <option>Haircare</option>
-            <option>Body</option>
-            <option>Tools</option>
-          </select>
-        </div>
-        <div class="search-field">
-          <label>Max budget</label>
-          <select class="search-select">
-            <option>Any price</option>
-            <option>Under ₹1,000</option>
-            <option>Under ₹2,500</option>
-            <option>Under ₹5,000</option>
-            <option>Under ₹10,000</option>
-          </select>
-        </div>
-        <button class="search-btn" id="searchBtn" type="button">
-          Find best price
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </button>
       </div>
+
+      <!-- CATEGORY MODE -->
+      <div class="category-mode" id="categoryMode" style="display:none;">
+        <div class="category-grid" id="categoryGrid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
       <div class="search-quick">
         <span class="search-quick-label">Trending →</span>
         <a href="#" class="quick-chip">Rare Beauty Soft Pinch</a>
@@ -2176,111 +2286,8 @@
       </div>
     </div>
 
-    <div class="drops-list">
-      <div class="drop-item">
-        <div class="drop-rank">i</div>
-        <div class="drop-info">
-          <div class="brand">Maison Margiela</div>
-          <div class="name">Replica Beach Walk EDT 100ml</div>
-          <div class="at">at <strong>Sephora India</strong> · Spring sale</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹9,200</div>
-          <div class="was">was ₹12,300</div>
-          <div class="save">↓ 25%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">ii</div>
-        <div class="drop-info">
-          <div class="brand">Drunk Elephant</div>
-          <div class="name">C-Firma Fresh Vitamin C Serum</div>
-          <div class="at">at <strong>Tira</strong> · Skincare event</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹6,400</div>
-          <div class="was">was ₹8,200</div>
-          <div class="save">↓ 22%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">iii</div>
-        <div class="drop-info">
-          <div class="brand">Sol de Janeiro</div>
-          <div class="name">Bum Bum Cream 240ml</div>
-          <div class="at">at <strong>Cult Beauty</strong> · Code CULT20</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹3,200</div>
-          <div class="was">was ₹4,700</div>
-          <div class="save">↓ 32%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">iv</div>
-        <div class="drop-info">
-          <div class="brand">Olaplex</div>
-          <div class="name">No.3 Hair Perfector 100ml</div>
-          <div class="at">at <strong>Cult Beauty</strong> · Bundle save</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹1,920</div>
-          <div class="was">was ₹2,800</div>
-          <div class="save">↓ 31%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">v</div>
-        <div class="drop-info">
-          <div class="brand">Charlotte Tilbury</div>
-          <div class="name">Pillow Talk Lipstick</div>
-          <div class="at">at <strong>Tira</strong> · Code TIRA20</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹2,640</div>
-          <div class="was">was ₹4,000</div>
-          <div class="save">↓ 34%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">vi</div>
-        <div class="drop-info">
-          <div class="brand">Rare Beauty</div>
-          <div class="name">Soft Pinch Liquid Blush — Joy</div>
-          <div class="at">at <strong>Nykaa</strong> · Code NYKAA15</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹1,690</div>
-          <div class="was">was ₹2,500</div>
-          <div class="save">↓ 32%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">vii</div>
-        <div class="drop-info">
-          <div class="brand">La Roche-Posay</div>
-          <div class="name">Anthelios UVMune 400 SPF50+</div>
-          <div class="at">at <strong>Lookfantastic</strong> · Code LF15</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹1,449</div>
-          <div class="was">was ₹2,099</div>
-          <div class="save">↓ 31%</div>
-        </div>
-      </div>
-      <div class="drop-item">
-        <div class="drop-rank">viii</div>
-        <div class="drop-info">
-          <div class="brand">Laneige</div>
-          <div class="name">Lip Sleeping Mask — Berry</div>
-          <div class="at">at <strong>Nykaa</strong> · K-beauty week</div>
-        </div>
-        <div class="drop-price">
-          <div class="now">₹1,580</div>
-          <div class="was">was ₹2,200</div>
-          <div class="save">↓ 28%</div>
-        </div>
-      </div>
+    <div class="drops-list" id="dropsList">
+      <!-- Populated dynamically from Supabase -->
     </div>
   </div>
 </section>
@@ -2425,13 +2432,7 @@
   },{threshold:0.15});
   document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
 
-  // Tab switching (visual only)
-  document.querySelectorAll('.search-tab').forEach(tab=>{
-    tab.addEventListener('click',()=>{
-      document.querySelectorAll('.search-tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-    });
-  });
+  // Tab switching handled by setupSearch() in backend script
 
   // ─── LOGIN MODAL ───
   const loginBtn=document.getElementById('loginBtn');
@@ -2634,8 +2635,7 @@
   let RETAILER_COUNT = 0;
 
   // ============================================
-  // RETAILER LOGOS — SVG fallbacks if logo_url is empty
-  // Maps retailer slug → inline SVG matching original design
+  // RETAILER SVG LOGOS (fallback if logo_url empty)
   // ============================================
   const RETAILER_LOGO_SVG = {
     'nykaa':    '<svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FC2779"/><text x="16" y="22" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg>',
@@ -2652,9 +2652,6 @@
     'sephora': 'sephora.nnnow.com'
   };
 
-  // ============================================
-  // GENERIC PRODUCT IMAGE FALLBACK (when no image_url)
-  // ============================================
   function defaultProductImage(brand, name) {
     const initial = (brand || name || '?').charAt(0).toUpperCase();
     return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
@@ -2667,7 +2664,6 @@
   // LOAD PRODUCTS FROM SUPABASE
   // ============================================
   async function loadProducts() {
-    // Get retailer count first
     const { count: retailerCount } = await supabaseClient
       .from('retailers')
       .select('*', { count: 'exact', head: true });
@@ -2701,18 +2697,46 @@
     }
     console.log('✓ Products loaded:', products);
 
-    // Hide loading bar in hero
     const loadingStatus = document.getElementById('loadingStatus');
     const loadingBar = document.getElementById('loadingBar');
     if (loadingStatus) loadingStatus.style.display = 'none';
     if (loadingBar) loadingBar.style.display = 'none';
 
     ALL_PRODUCTS = products;
-    renderProducts(products);
+    populateCategoryDropdown();
+    populateCategoryGrid();           // [#3]
+    renderInitialView();              // [#2] show only trending
   }
 
   // ============================================
-  // FUZZY MATCH (bigram similarity, 0–1)
+  // [#2] INITIAL VIEW — show only trending products on first load
+  // ============================================
+  function renderInitialView() {
+    const trending = ALL_PRODUCTS.filter(p => p.is_trending);
+    const display = trending.length > 0 ? trending.slice(0, 4) : ALL_PRODUCTS.slice(0, 3);
+    renderProducts(display, { isInitialView: true });
+  }
+
+  // ============================================
+  // [#1] POPULATE CATEGORY DROPDOWN
+  // — only categories that actually have products
+  // ============================================
+  function populateCategoryDropdown() {
+    const select = document.getElementById('categorySelect');
+    if (!select) return;
+    // Get unique categories from products that have at least 1 product
+    const categories = [...new Set(
+      ALL_PRODUCTS
+        .map(p => p.category)
+        .filter(c => c && c.trim() !== '')
+    )].sort();
+
+    select.innerHTML = '<option value="">All categories</option>' +
+      categories.map(c => `<option value="${c}">${c}</option>`).join('');
+  }
+
+  // ============================================
+  // FUZZY MATCH (bigram similarity)
   // ============================================
   function fuzzyScore(query, target) {
     if (!query || !target) return 0;
@@ -2729,23 +2753,71 @@
     return (2 * matches) / (qBg.length + tBg.length);
   }
 
-  function searchProducts(query) {
-    if (!query || query.trim() === '') { renderProducts(ALL_PRODUCTS); return; }
-    const scored = ALL_PRODUCTS.map(p => ({
-      product: p,
-      score: Math.max(
-        fuzzyScore(query, `${p.brand} ${p.name}`),
-        fuzzyScore(query, p.name),
-        fuzzyScore(query, p.brand)
-      )
-    }));
-    const matched = scored.filter(s => s.score >= 0.6).sort((a,b)=>b.score-a.score).map(s=>s.product);
-    if (matched.length === 0) renderEmptyState(query);
-    else renderProducts(matched);
+  // ============================================
+  // [#2, #6] APPLY ALL FILTERS — search + category + budget
+  // Returns matched products with their fuzzy score
+  // ============================================
+  function applyFilters(query, category, maxBudget) {
+    let candidates = ALL_PRODUCTS;
+
+    // Filter by category first
+    if (category && category.trim() !== '') {
+      candidates = candidates.filter(p => p.category === category);
+    }
+
+    // Filter by max budget — uses the MAX price across retailers (#2)
+    if (maxBudget && !isNaN(maxBudget)) {
+      candidates = candidates.filter(p => {
+        if (!p.prices || p.prices.length === 0) return false;
+        const maxPrice = Math.max(...p.prices.map(pr => Number(pr.current_price)));
+        return maxPrice <= maxBudget;
+      });
+    }
+
+    // Apply text search with fuzzy match
+    if (query && query.trim() !== '') {
+      const scored = candidates.map(p => ({
+        product: p,
+        score: Math.max(
+          fuzzyScore(query, `${p.brand} ${p.name}`),
+          fuzzyScore(query, p.name),
+          fuzzyScore(query, p.brand)
+        )
+      }));
+      return scored.filter(s => s.score >= 0.6).sort((a,b)=>b.score-a.score).map(s=>s.product);
+    }
+
+    return candidates;
   }
 
   // ============================================
-  // BUILD A PRODUCT CARD (matches original DOM)
+  // RUN SEARCH — reads from form inputs
+  // ============================================
+  function runSearch() {
+    const query = (document.querySelector('.search-input')?.value || '').trim();
+    const category = document.getElementById('categorySelect')?.value || '';
+    const budgetRaw = document.getElementById('budgetSelect')?.value || '';
+    const maxBudget = budgetRaw ? Number(budgetRaw) : null;
+
+    // [#2] If no filters at all, return to initial trending view
+    if (!query && !category && !maxBudget) {
+      renderInitialView();
+      return;
+    }
+
+    const matched = applyFilters(query, category, maxBudget);
+
+    if (matched.length === 0) {
+      renderEmptyState(query, category, maxBudget);
+    } else {
+      renderProducts(matched);
+    }
+  }
+
+  // ============================================
+  // BUILD A PRODUCT CARD
+  // [#8] hide was_price if missing or same as current
+  // [#7] PERKS column removed
   // ============================================
   function buildCard(p, isTrendingTag = false) {
     if (!p.prices || p.prices.length === 0) return null;
@@ -2755,14 +2827,13 @@
     const savings = highest.current_price - lowest.current_price;
 
     const card = document.createElement('div');
-    card.className = 'product-card open';
+    card.className = 'product-card open from-db';
+    card.dataset.productId = p.id;
 
-    // Product image — use uploaded URL or fallback SVG
     const imgHTML = p.image_url
-      ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.outerHTML='${defaultProductImage(p.brand, p.name).replace(/'/g, '&apos;')}'"/>`
+      ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/>`
       : defaultProductImage(p.brand, p.name);
 
-    // Pip strip (mini logos) under the brand
     const pipsHTML = sorted.map(price => {
       const slug = price.retailers.slug;
       const logo = price.retailers.logo_url
@@ -2771,7 +2842,7 @@
       return `<div class="store-pip">${logo}</div>`;
     }).join('');
 
-    // Retailer table rows
+    // [#7] PERKS column removed — only Retailer / Stock / Shipping / Price / Visit
     const rowsHTML = sorted.map((price, i) => {
       const slug = price.retailers.slug;
       const logo = price.retailers.logo_url
@@ -2785,12 +2856,13 @@
       const shippingHTML = price.shipping_cost === 0 || price.shipping_cost == null
         ? 'Free shipping'
         : `₹${Number(price.shipping_cost).toLocaleString('en-IN')} shipping`;
-      const perksHTML = price.promo_code
-        ? `<div class="perks"><span class="perk code">${price.promo_code}</span></div>`
-        : '<div class="perks"><span class="perk" style="opacity:0.5;">—</span></div>';
-      const priceHTML = price.was_price && price.was_price > price.current_price
+
+      // [#8] only show was_price if it exists AND is greater than current
+      const showWas = price.was_price && Number(price.was_price) > Number(price.current_price);
+      const priceHTML = showWas
         ? `<span class="old">₹${Number(price.was_price).toLocaleString('en-IN')}</span>₹${Number(price.current_price).toLocaleString('en-IN')}`
         : `₹${Number(price.current_price).toLocaleString('en-IN')}`;
+
       return `
         <tr class="retailer-row${isBest ? ' best' : ''}">
           <td>
@@ -2804,7 +2876,6 @@
           </td>
           <td>${stockHTML}</td>
           <td class="ship-cell">${shippingHTML}</td>
-          <td>${perksHTML}</td>
           <td class="price-cell">${priceHTML}</td>
           <td class="go-cell"><a href="${price.affiliate_url}" target="_blank" rel="noopener sponsored" class="go-btn">Visit store →</a></td>
         </tr>
@@ -2840,7 +2911,6 @@
               <th>Retailer</th>
               <th>Stock</th>
               <th>Shipping</th>
-              <th>Perks</th>
               <th class="right">Price</th>
               <th class="right"></th>
             </tr>
@@ -2855,25 +2925,36 @@
   // ============================================
   // RENDER PRODUCTS
   // ============================================
-  function renderProducts(products) {
+  function renderProducts(products, opts = {}) {
     const container = document.querySelector('#compare .section-inner');
     if (!container) return;
     container.querySelectorAll('.product-card, .empty-state').forEach(c => c.remove());
+    const isTrendingTag = !!opts.isInitialView;
     products.forEach(p => {
-      const card = buildCard(p);
+      const card = buildCard(p, isTrendingTag);
       if (card) container.appendChild(card);
     });
     const c = document.getElementById('resultsCount');
-    if (c) c.innerHTML = `<strong>${products.length} product${products.length === 1 ? '' : 's'}</strong> · ${RETAILER_COUNT} retailers tracked · prices include shipping &amp; codes`;
+    if (c) {
+      if (opts.isInitialView) {
+        c.innerHTML = `<strong>Trending now</strong> · ${products.length} product${products.length === 1 ? '' : 's'} · search above to compare more · ${RETAILER_COUNT} retailers tracked`;
+      } else {
+        c.innerHTML = `<strong>${products.length} product${products.length === 1 ? '' : 's'}</strong> · ${RETAILER_COUNT} retailers tracked · prices include shipping &amp; codes`;
+      }
+    }
   }
 
   // ============================================
   // EMPTY STATE
   // ============================================
-  function renderEmptyState(query) {
+  function renderEmptyState(query, category, maxBudget) {
     const container = document.querySelector('#compare .section-inner');
     if (!container) return;
     container.querySelectorAll('.product-card, .empty-state').forEach(c => c.remove());
+
+    let searchSummary = query ? `"${query}"` : 'your filters';
+    if (category) searchSummary += ` in ${category}`;
+    if (maxBudget) searchSummary += ` under ₹${maxBudget.toLocaleString('en-IN')}`;
 
     const empty = document.createElement('div');
     empty.className = 'empty-state';
@@ -2881,7 +2962,7 @@
     empty.innerHTML = `
       <div style="font-size:56px;margin-bottom:16px;">✨</div>
       <h3 style="font-family:var(--serif);font-size:28px;font-weight:500;margin:0 0 12px 0;color:var(--ink);">
-        We couldn't find "${query}"
+        We couldn't find ${searchSummary}
       </h3>
       <p style="color:var(--ink-soft);max-width:480px;margin:0 auto 8px;line-height:1.6;">
         Either it's not in our index yet, or the spelling is slightly off. Here's what's trending right now instead — chances are good your next favourite is below.
@@ -2900,45 +2981,389 @@
     });
 
     const c = document.getElementById('resultsCount');
-    if (c) c.innerHTML = `<strong>0 matches for "${query}"</strong> · showing trending instead`;
+    if (c) c.innerHTML = `<strong>0 matches</strong> · showing trending instead`;
   }
 
   // ============================================
-  // SEARCH BAR WIRING
+  // [#3] POPULATE CATEGORY GRID (Browse by Category mode)
+  // — only categories that have at least 1 product
   // ============================================
-  function setupSearch() {
-    const input = document.querySelector('.search-input');
-    const btn = document.getElementById('searchBtn');
-    if (!input || !btn) return;
+  function populateCategoryGrid() {
+    const grid = document.getElementById('categoryGrid');
+    if (!grid) return;
 
-    const doSearch = () => {
-      searchProducts(input.value);
-      document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-    btn.addEventListener('click', doSearch);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
-
-    let typingTimer;
-    input.addEventListener('input', () => {
-      clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => {
-        if (input.value.trim().length >= 2 || input.value.trim() === '') {
-          searchProducts(input.value);
-        }
-      }, 250);
+    // Count products per category
+    const catMap = {};
+    ALL_PRODUCTS.forEach(p => {
+      if (p.category && p.category.trim()) {
+        catMap[p.category] = (catMap[p.category] || 0) + 1;
+      }
     });
+    const sortedCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
 
-    document.querySelectorAll('.search-quick .quick-chip').forEach(chip => {
-      chip.addEventListener('click', e => {
-        e.preventDefault();
-        input.value = chip.textContent.trim();
-        doSearch();
+    if (sortedCats.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:24px;">No categories yet.</div>';
+      return;
+    }
+
+    grid.innerHTML = sortedCats.map(([cat, count]) => `
+      <button class="category-chip" data-category="${cat}" type="button">
+        <span class="cat-name">${cat}</span>
+        <span class="cat-count">${count} product${count === 1 ? '' : 's'}</span>
+      </button>
+    `).join('');
+
+    // Wire clicks → set categorySelect, switch to search mode, run search
+    grid.querySelectorAll('.category-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const cat = chip.dataset.category;
+        const select = document.getElementById('categorySelect');
+        const input = document.querySelector('.search-input');
+        if (input) input.value = '';
+        if (select) select.value = cat;
+        // Switch back to search mode so user sees filters
+        switchToSearchMode();
+        runSearch();
+        document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   }
 
+  // ============================================
+  // [#3] TAB MODE SWITCHING
+  // ============================================
+  function switchToSearchMode() {
+    document.getElementById('searchMode').style.display = '';
+    document.getElementById('categoryMode').style.display = 'none';
+    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.search-tab[data-tab="search"]')?.classList.add('active');
+  }
+  function switchToCategoryMode() {
+    document.getElementById('searchMode').style.display = 'none';
+    document.getElementById('categoryMode').style.display = '';
+    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.search-tab[data-tab="category"]')?.classList.add('active');
+    // Hide suggestions if open
+    document.getElementById('searchSuggestions')?.classList.remove('open');
+  }
+
+  // ============================================
+  // [#5] BUILD SEARCH SUGGESTIONS — match across all properties
+  // ============================================
+  function buildSuggestions(query) {
+    if (!query || query.trim().length < 1) return [];
+    const q = query.toLowerCase().trim();
+    const matches = ALL_PRODUCTS.filter(p => {
+      const fields = [
+        p.brand,
+        p.name,
+        p.category,
+        p.subcategory,
+        p.size,
+        // Also match retailer names
+        ...(p.prices || []).map(pr => pr.retailers?.name)
+      ].filter(Boolean).map(s => String(s).toLowerCase());
+      return fields.some(f => f.includes(q));
+    });
+    return matches.slice(0, 8); // cap at 8 suggestions
+  }
+
+  function renderSuggestions(query) {
+    const dropdown = document.getElementById('searchSuggestions');
+    if (!dropdown) return;
+    if (!query || query.trim().length < 1) {
+      dropdown.classList.remove('open');
+      dropdown.innerHTML = '';
+      return;
+    }
+    const matches = buildSuggestions(query);
+    if (matches.length === 0) {
+      dropdown.classList.remove('open');
+      dropdown.innerHTML = '';
+      return;
+    }
+    dropdown.innerHTML = matches.map(p => {
+      const lowest = [...p.prices].sort((a,b)=>a.current_price - b.current_price)[0];
+      const lowestPrice = lowest ? `From ₹${Number(lowest.current_price).toLocaleString('en-IN')}` : '';
+      return `
+        <div class="suggestion-item" data-product-id="${p.id}">
+          <div class="sg-brand">${p.brand}</div>
+          <div class="sg-name">${p.name}</div>
+          <div class="sg-meta">${[p.category, p.size, lowestPrice].filter(Boolean).join(' · ')}</div>
+        </div>
+      `;
+    }).join('');
+    dropdown.classList.add('open');
+
+    // Click → fill input + run search
+    dropdown.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const productId = Number(item.dataset.productId);
+        const product = ALL_PRODUCTS.find(p => p.id === productId);
+        const input = document.querySelector('.search-input');
+        if (product && input) {
+          input.value = `${product.brand} ${product.name}`;
+          dropdown.classList.remove('open');
+          // [#6] re-enable button after fill
+          updateSearchBtnState();
+          runSearch();
+          document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // [#6] ENABLE/DISABLE SEARCH BUTTON BASED ON INPUT LENGTH
+  // ============================================
+  function updateSearchBtnState() {
+    const input = document.querySelector('.search-input');
+    const btn = document.getElementById('searchBtn');
+    if (!input || !btn) return;
+    const len = input.value.trim().length;
+    btn.disabled = len < 2;
+  }
+
+  // ============================================
+  // WIRE UP SEARCH BAR
+  // ============================================
+  function setupSearch() {
+    const input = document.querySelector('.search-input');
+    const btn = document.getElementById('searchBtn');
+    const categorySelect = document.getElementById('categorySelect');
+    const budgetSelect = document.getElementById('budgetSelect');
+    const dropdown = document.getElementById('searchSuggestions');
+    if (!input || !btn) return;
+
+    // [#6] Initial state — disabled
+    updateSearchBtnState();
+
+    const handleSubmit = (e) => {
+      if (e) e.preventDefault();
+      if (input.value.trim().length < 2) return; // [#6] guard
+      dropdown?.classList.remove('open');
+      runSearch();
+      document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    btn.addEventListener('click', handleSubmit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleSubmit(e);
+      if (e.key === 'Escape') dropdown?.classList.remove('open');
+    });
+
+    // Live as user types
+    let typingTimer;
+    input.addEventListener('input', () => {
+      updateSearchBtnState();              // [#6]
+      renderSuggestions(input.value);      // [#5] dropdown
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        runSearch();                       // also filter compare section
+      }, 200);
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !dropdown?.contains(e.target)) {
+        dropdown?.classList.remove('open');
+      }
+    });
+    input.addEventListener('focus', () => {
+      if (input.value.trim().length >= 1) renderSuggestions(input.value);
+    });
+
+    categorySelect?.addEventListener('change', runSearch);
+    budgetSelect?.addEventListener('change', runSearch);
+
+    // Trending chips
+    document.querySelectorAll('.search-quick .quick-chip').forEach(chip => {
+      chip.addEventListener('click', e => {
+        e.preventDefault();
+        input.value = chip.textContent.trim();
+        updateSearchBtnState();
+        dropdown?.classList.remove('open');
+        runSearch();
+        document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // [#3] Tab switching — Browse by Category swaps the widget inline
+    document.querySelectorAll('.search-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabType = tab.dataset.tab;
+        if (tabType === 'category') {
+          switchToCategoryMode();
+        } else {
+          switchToSearchMode();
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // [#5] WIRE UP TRENDING CATEGORY CARDS
+  // — clicking a trending card filters compare section to that category
+  // ============================================
+  function setupCategoryCards() {
+    document.querySelectorAll('.trending-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const catEl = card.querySelector('.cat');
+        if (!catEl) return;
+        // Extract first word before · (e.g. "Lip · Makeup" -> "Makeup", "Skincare" -> "Skincare")
+        const catText = catEl.textContent.trim();
+        // Match against actual DB categories
+        const dbCategories = [...new Set(ALL_PRODUCTS.map(p => p.category).filter(Boolean))];
+        const matchedCat = dbCategories.find(c =>
+          catText.toLowerCase().includes(c.toLowerCase()) ||
+          c.toLowerCase().includes(catText.split('·').pop().trim().toLowerCase())
+        );
+
+        const select = document.getElementById('categorySelect');
+        if (select && matchedCat) {
+          select.value = matchedCat;
+          // Clear search input so category filter applies cleanly
+          const input = document.querySelector('.search-input');
+          if (input) input.value = '';
+          runSearch();
+          document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // [#4] RENDER DROPS — populate Drops section from DB
+  // Shows products with is_drop=true, sorted by biggest savings
+  // Each item is clickable → scrolls to compare + filters to that product
+  // ============================================
+  function renderDrops() {
+    const container = document.getElementById('dropsList');
+    if (!container) return;
+
+    // Get drops — products with is_drop=true OR products with biggest savings
+    let drops = ALL_PRODUCTS.filter(p => p.is_drop && p.prices && p.prices.length > 0);
+
+    // If no products are flagged is_drop, fall back to products with biggest savings
+    if (drops.length === 0) {
+      drops = ALL_PRODUCTS.filter(p => p.prices && p.prices.length > 0);
+    }
+
+    // Calculate savings for each + sort by biggest %
+    const dropsWithSavings = drops.map(p => {
+      const sorted = [...p.prices].sort((a, b) => a.current_price - b.current_price);
+      const lowest = sorted[0];
+      // Find best was_price → current_price savings, only if was_price exists
+      let bestSavingsPct = 0;
+      let bestRetailer = null;
+      let bestPromo = null;
+      sorted.forEach(price => {
+        if (price.was_price && Number(price.was_price) > Number(price.current_price)) {
+          const pct = ((price.was_price - price.current_price) / price.was_price) * 100;
+          if (pct > bestSavingsPct) {
+            bestSavingsPct = pct;
+            bestRetailer = price.retailers;
+            bestPromo = price.promo_code;
+          }
+        }
+      });
+      return {
+        product: p,
+        lowest,
+        bestSavingsPct: Math.round(bestSavingsPct),
+        bestRetailer: bestRetailer || lowest.retailers,
+        bestPromo
+      };
+    }).filter(d => d.bestSavingsPct > 0); // only show actual drops
+
+    // Sort by biggest savings, take top 8
+    dropsWithSavings.sort((a, b) => b.bestSavingsPct - a.bestSavingsPct);
+    const topDrops = dropsWithSavings.slice(0, 8);
+
+    if (topDrops.length === 0) {
+      container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--ink-soft);">No price drops to show right now. Check back soon!</div>';
+      return;
+    }
+
+    const romans = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii'];
+    container.innerHTML = topDrops.map((d, i) => {
+      const lowestPriceEntry = [...d.product.prices].sort((a, b) => a.current_price - b.current_price)[0];
+      const promoText = d.bestPromo ? ` · Code ${d.bestPromo}` : '';
+      return `
+        <div class="drop-item" data-product-id="${d.product.id}">
+          <div class="drop-rank">${romans[i] || (i + 1)}</div>
+          <div class="drop-info">
+            <div class="brand">${d.product.brand}</div>
+            <div class="name">${d.product.name}</div>
+            <div class="at">at <strong>${d.bestRetailer.name}</strong>${promoText}</div>
+          </div>
+          <div class="drop-price">
+            <div class="now">₹${Number(lowestPriceEntry.current_price).toLocaleString('en-IN')}</div>
+            ${lowestPriceEntry.was_price && Number(lowestPriceEntry.was_price) > Number(lowestPriceEntry.current_price)
+              ? `<div class="was">was ₹${Number(lowestPriceEntry.was_price).toLocaleString('en-IN')}</div>`
+              : ''}
+            <div class="save">↓ ${d.bestSavingsPct}%</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // [#4] Wire up click → scroll to compare + filter to this product
+    container.querySelectorAll('.drop-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const productId = item.dataset.productId;
+        if (!productId) return;
+        filterByProductId(Number(productId));
+      });
+    });
+  }
+
+  // ============================================
+  // [#4] FILTER COMPARE SECTION TO ONE SPECIFIC PRODUCT
+  // Used when clicking a Drops item
+  // ============================================
+  function filterByProductId(productId) {
+    const product = ALL_PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+
+    // Reset other filters so the product definitely shows
+    const input = document.querySelector('.search-input');
+    const categorySelect = document.getElementById('categorySelect');
+    const budgetSelect = document.getElementById('budgetSelect');
+    if (input) input.value = '';
+    if (categorySelect) categorySelect.value = '';
+    if (budgetSelect) budgetSelect.value = '';
+
+    // Render only this product
+    renderProducts([product]);
+
+    // Scroll to compare section
+    setTimeout(() => {
+      document.getElementById('compare')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+
+    // Update results count to be informative
+    const c = document.getElementById('resultsCount');
+    if (c) c.innerHTML = `<strong>Showing 1 product</strong> · <a href="#" id="backToTrending" style="color:var(--accent);text-decoration:underline;">back to trending</a>`;
+    document.getElementById('backToTrending')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      renderInitialView();
+    });
+  }
+
+  // Expose globals for the "show all" inline link to work
+  window.ALL_PRODUCTS_REF = [];
+  window.RETAILER_COUNT_REF = 0;
+
   // ─── INIT ───
-  loadProducts().then(setupSearch);
+  loadProducts().then(() => {
+    window.ALL_PRODUCTS_REF = ALL_PRODUCTS;
+    window.RETAILER_COUNT_REF = RETAILER_COUNT;
+    setupSearch();
+    setupCategoryCards();
+    renderDrops();
+  });
 </script>
 
 </body>
