@@ -1,8 +1,8 @@
-# Saiko
+# Vanity Scan
 
 > The independent beauty price index for India. (this is not a real website yet)
 
-Saiko is a price-comparison engine for cosmetics — a Skyscanner for beauty. It pulls live prices across 240+ retailers (Nykaa, Tira, Sephora India, Cult Beauty, Lookfantastic, brand-direct stores, and more), folds in shipping, taxes, and active discount codes, and surfaces the real number you'd pay at checkout.
+Vanity Scan is a price-comparison engine for cosmetics — a Skyscanner for beauty. It pulls live prices across 240+ retailers (Nykaa, Tira, Sephora India, Cult Beauty, Lookfantastic, brand-direct stores, and more), folds in shipping, taxes, and active discount codes, and surfaces the real number you'd pay at checkout.
 
 This repository contains the marketing site and product landing page — a single self-contained HTML prototype demonstrating the full user experience.
 
@@ -10,14 +10,14 @@ This repository contains the marketing site and product landing page — a singl
 
 ## Live demo
 
-Open `saiko.html` in any modern browser. No build step, no dependencies beyond a Google Fonts CDN call.
+Open `https://rjkmrdesai.github.io/vanityscan/` in any modern browser. No build step, no dependencies beyond a Google Fonts CDN call.
 
 ```bash
 # macOS
-open saiko.html
+open https://rjkmrdesai.github.io/vanityscan/
 
 # Linux
-xdg-open saiko.html
+xdg-open https://rjkmrdesai.github.io/vanityscan/
 
 # Or just drag the file into your browser
 ```
@@ -26,7 +26,7 @@ xdg-open saiko.html
 
 ## What's in the prototype
 
-The single-page prototype demonstrates the full Saiko experience end-to-end:
+The single-page prototype demonstrates the full Vanity Scan experience end-to-end:
 
 **Hero & search.** A tool-led landing surface with the search card as the primary element — three input modes (search, paste a link, browse by category), four filter fields (product, category, max budget, action), and trending product chips for one-click queries. A live price ticker scrolls underneath showing real-time deal movement across the index.
 
@@ -42,7 +42,7 @@ The single-page prototype demonstrates the full Saiko experience end-to-end:
 
 ## Design system
 
-Saiko uses a warm editorial palette inspired by the "modern beauty boutique" direction — Aesop, Necessaire, Glow Recipe — refined for tool-first density.
+Vanity Scan uses a warm editorial palette inspired by the "modern beauty boutique" direction — Aesop, Necessaire, Glow Recipe — refined for tool-first density.
 
 ### Palette
 
@@ -128,7 +128,7 @@ Triggering a search (button click, Enter key, or quick-chip tap) or expanding a 
 
 ```
 .
-├── saiko.html         # The complete prototype — HTML, CSS, JS in one file
+├── index.html         # The complete prototype — HTML, CSS, JS in one file
 └── README.md          # This file
 ```
 
@@ -138,7 +138,7 @@ The prototype is intentionally a single file. For a production codebase you'd sp
 
 ## Brand
 
-**Name:** Saiko
+**Name:** Vanity Scan
 **Wordmark:** Fraunces italic, set in cocoa (`#2B1810`)
 **Tagline:** *Every shade. Every retailer. One honest price.*
 
@@ -146,15 +146,15 @@ The brand voice is editorial and confident — adjacent to a beauty magazine, no
 
 ---
 
-## How Saiko makes money (proposed)
+## How Vanity Scan makes money (proposed)
 
-Saiko does **not** take a cut from the retailer when a user clicks through. The price the user sees is the price the user pays. Revenue comes from:
+Vanity Scan does **not** take a cut from the retailer when a user clicks through. The price the user sees is the price the user pays. Revenue comes from:
 
 1. **Retailer subscriptions** — featured placement, analytics dashboards, restock alerts to retailers when their competitors run out
 2. **Brand intelligence** — anonymized pricing data sold to brands to help them spot grey-market activity and retailer pricing violations
 3. **Affiliate links to brand-direct stores only** — when buying direct from the brand wins, that's a clean affiliate link with no markup; when a third-party retailer wins, it's a clean unaffiliated link
 
-This protects the integrity of the comparison — Saiko has no incentive to surface a more expensive retailer.
+This protects the integrity of the comparison — Vanity Scan has no incentive to surface a more expensive retailer.
 
 ---
 
@@ -222,13 +222,13 @@ The prototype uses zero frameworks deliberately — every interaction is hand-wr
 
 ## License
 
-This prototype is shared as a design and code reference. The Saiko name, wordmark, and brand identity are not licensed for reuse. Code patterns, layouts, and design system tokens are free to learn from and adapt.
+This prototype is shared as a design and code reference. The Vanity Scan name, wordmark, and brand identity are not licensed for reuse. Code patterns, layouts, and design system tokens are free to learn from and adapt.
 
 ---
 
 ## Credits
 
-- Brand direction: Saiko team
+- Brand direction: Vanity Scan team
 - Type: Fraunces (Undercase Type), Inter (Rasmus Andersson), JetBrains Mono (JetBrains)
 - Sample products are real but pricing is illustrative and was accurate at time of prototype build
 - Retailer logos are simplified monogram representations — not official brand assets
