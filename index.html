@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Saiko — the beauty price index</title>
+<title>Vanity Scan — the beauty price index</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -344,6 +344,88 @@
   }
   .product-summary:hover .product-img .zoom-hint{opacity:1;}
   .product-img .zoom-hint svg{width:14px;height:14px;}
+
+  /* IMAGE GALLERY [#5] */
+  .product-gallery{
+    display:flex;flex-direction:column;gap:6px;
+    width:96px;
+  }
+  .gallery-main-img{
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:inherit;
+    display:block;
+  }
+  .product-thumbs{
+    display:flex;gap:6px;
+  }
+  .product-thumb{
+    width:26px;height:26px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    overflow:hidden;
+    padding:0;
+    cursor:pointer;
+    background:#fff;
+    transition:border-color 0.15s,transform 0.15s;
+  }
+  .product-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .product-thumb:hover{transform:translateY(-1px);border-color:var(--line-strong);}
+  .product-thumb.active{border-color:var(--caramel-deep);box-shadow:0 0 0 1px var(--caramel-deep);}
+
+  /* DATA FRESHNESS [#3] */
+  .product-info .meta .freshness{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.03em;
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid var(--line);
+  }
+  .freshness.fresh{color:var(--sage-deep);border-color:rgba(92,107,79,0.32);background:rgba(92,107,79,0.08);}
+  .freshness.aging{color:var(--caramel-deep);border-color:rgba(168,120,80,0.32);background:rgba(168,120,80,0.08);}
+  .freshness.stale{color:var(--brick-deep);border-color:rgba(142,67,63,0.32);background:rgba(142,67,63,0.08);}
+  .retailer-cell-name .checked{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.02em;
+    margin-top:3px;
+    display:flex;align-items:center;gap:3px;
+  }
+  .checked.fresh{color:var(--sage-deep);}
+  .checked.aging{color:var(--caramel-deep);}
+  .checked.stale{color:var(--brick-deep);}
+
+  /* LIGHTBOX GALLERY NAV [#5] */
+  .lightbox-img{position:relative;}
+  .lightbox-img .lb-main{width:100%;height:100%;object-fit:contain;border-radius:inherit;display:block;}
+  .lightbox-nav{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:40px;height:40px;
+    border-radius:50%;border:none;
+    background:rgba(43,24,16,0.55);color:var(--bone);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:background 0.2s;
+    z-index:2;
+  }
+  .lightbox-nav:hover{background:rgba(43,24,16,0.8);}
+  .lightbox-nav.prev{left:12px;}
+  .lightbox-nav.next{right:12px;}
+  .lightbox-nav svg{width:20px;height:20px;}
+  .lightbox-thumbs{
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .lightbox-thumb{
+    width:48px;height:48px;
+    border-radius:9px;border:1px solid var(--line);
+    overflow:hidden;padding:0;cursor:pointer;background:#fff;
+    transition:border-color 0.15s;
+  }
+  .lightbox-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .lightbox-thumb.active{border-color:var(--caramel-deep);box-shadow:0 0 0 1px var(--caramel-deep);}
 
   /* LOADING BAR */
   .loading-bar{
@@ -1368,6 +1450,10 @@
       align-items:flex-start;
     }
     .product-img{width:72px;height:72px;}
+    .product-gallery{width:72px;}
+    .product-thumb{width:20px;height:20px;border-radius:5px;}
+    .product-info .meta{gap:8px 10px;}
+    .product-info .meta .freshness{font-size:9px;padding:1px 6px;}
     .product-info h3{font-size:16px;margin-bottom:4px;}
     .product-info .brand{font-size:9px;}
     .product-info .meta{font-size:12px;gap:10px;}
@@ -1594,7 +1680,7 @@
 <!-- TOPBAR -->
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="#" class="logo">Saiko</a>
+    <a href="#" class="logo">Vanity Scan</a>
     <nav class="topbar-nav">
       <a href="#compare">Compare</a>
       <a href="#trending">Trending</a>
@@ -1620,7 +1706,7 @@
   <div class="hero-inner">
     <div class="hero-eyebrow">The beauty price index · India</div>
     <h1>Every shade. Every retailer.<br/><span class="italic">One honest price.</span></h1>
-    <p class="hero-sub">Compare live prices across Nykaa, Tira, Sephora India, Cult Beauty and 240+ more — including shipping, taxes, and active codes.</p>
+    <p class="hero-sub">Compare live prices across Nykaa, Tira, and Sephora — including shipping, taxes, and active codes.</p>
 
     <!-- THE TOOL — search-first -->
     <div class="search-card">
@@ -1691,32 +1777,32 @@
   <div class="ticker-track">
     <span class="ticker-item"><span class="product">Charlotte Tilbury Pillow Talk</span> <span class="down">↓ 34%</span> <span>₹2,640 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Sol de Janeiro Bum Bum 240ml</span> <span class="down">↓ 32%</span> <span>₹3,200 at Cult Beauty</span></span>
+    <span class="ticker-item"><span class="product">Sol de Janeiro Bum Bum 240ml</span> <span class="down">↓ 24%</span> <span>₹3,200 at Nykaa</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">La Mer Crème de la Mer 30ml</span> <span class="down">↓ 18%</span> <span>₹19,200 at Sephora IN</span></span>
+    <span class="ticker-item"><span class="product">Estée Lauder Night Repair 30ml</span> <span class="down">↓ 17%</span> <span>₹6,800 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Olaplex No.3 100ml</span> <span class="down">↓ 31%</span> <span>₹1,920 at Cult Beauty</span></span>
+    <span class="ticker-item"><span class="product">Olaplex No.3 100ml</span> <span class="down">↓ 31%</span> <span>₹1,920 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Drunk Elephant C-Firma</span> <span class="down">↓ 22%</span> <span>₹6,400 at Tira</span></span>
+    <span class="ticker-item"><span class="product">Maybelline Fit Me Foundation</span> <span class="down">↓ 21%</span> <span>₹549 at Nykaa</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Dior Lip Glow Oil</span> <span class="up">↑ 8%</span> <span>₹3,890 at Sephora IN</span></span>
+    <span class="ticker-item"><span class="product">Dior Lip Glow Oil</span> <span class="up">↑ 9%</span> <span>₹3,650 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Rare Beauty Soft Pinch Joy</span> <span class="down">↓ 32%</span> <span>₹1,690 at Nykaa</span></span>
+    <span class="ticker-item"><span class="product">Rare Beauty Soft Pinch</span> <span class="down">↓ 23%</span> <span>₹1,690 at Nykaa</span></span>
     <span class="ticker-dot">✦</span>
     <!-- duplicate -->
     <span class="ticker-item"><span class="product">Charlotte Tilbury Pillow Talk</span> <span class="down">↓ 34%</span> <span>₹2,640 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Sol de Janeiro Bum Bum 240ml</span> <span class="down">↓ 32%</span> <span>₹3,200 at Cult Beauty</span></span>
+    <span class="ticker-item"><span class="product">Sol de Janeiro Bum Bum 240ml</span> <span class="down">↓ 24%</span> <span>₹3,200 at Nykaa</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">La Mer Crème de la Mer 30ml</span> <span class="down">↓ 18%</span> <span>₹19,200 at Sephora IN</span></span>
+    <span class="ticker-item"><span class="product">Estée Lauder Night Repair 30ml</span> <span class="down">↓ 17%</span> <span>₹6,800 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Olaplex No.3 100ml</span> <span class="down">↓ 31%</span> <span>₹1,920 at Cult Beauty</span></span>
+    <span class="ticker-item"><span class="product">Olaplex No.3 100ml</span> <span class="down">↓ 31%</span> <span>₹1,920 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Drunk Elephant C-Firma</span> <span class="down">↓ 22%</span> <span>₹6,400 at Tira</span></span>
+    <span class="ticker-item"><span class="product">Maybelline Fit Me Foundation</span> <span class="down">↓ 21%</span> <span>₹549 at Nykaa</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Dior Lip Glow Oil</span> <span class="up">↑ 8%</span> <span>₹3,890 at Sephora IN</span></span>
+    <span class="ticker-item"><span class="product">Dior Lip Glow Oil</span> <span class="up">↑ 9%</span> <span>₹3,650 at Tira</span></span>
     <span class="ticker-dot">✦</span>
-    <span class="ticker-item"><span class="product">Rare Beauty Soft Pinch Joy</span> <span class="down">↓ 32%</span> <span>₹1,690 at Nykaa</span></span>
+    <span class="ticker-item"><span class="product">Rare Beauty Soft Pinch</span> <span class="down">↓ 23%</span> <span>₹1,690 at Nykaa</span></span>
     <span class="ticker-dot">✦</span>
   </div>
 </div>
@@ -1737,7 +1823,7 @@
 
     <div class="loading-status" id="loadingStatus">
       <div class="spinner"></div>
-      <span id="loadingText">Fetching live prices from 240 retailers</span>
+      <span id="loadingText">Fetching live prices from Nykaa, Tira & Sephora</span>
       <span class="pct" id="loadingPct">0%</span>
     </div>
     <div class="loading-bar" id="loadingBar">
@@ -1757,435 +1843,6 @@
       </div>
     </div>
 
-    <!-- PRODUCT 1: Pillow Talk -->
-    <div class="product-card open">
-      <div class="product-summary">
-        <div class="product-img bg-brick">
-          <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="ct-tube" x1="0" x2="1" y1="0" y2="0">
-                <stop offset="0" stop-color="#A87850"/>
-                <stop offset="0.4" stop-color="#E8D4B8"/>
-                <stop offset="0.5" stop-color="#FAF6F0"/>
-                <stop offset="0.6" stop-color="#E8D4B8"/>
-                <stop offset="1" stop-color="#8E5F3D"/>
-              </linearGradient>
-              <linearGradient id="ct-bullet" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0" stop-color="#D4A09C"/>
-                <stop offset="1" stop-color="#A85C57"/>
-              </linearGradient>
-            </defs>
-            <rect x="34" y="42" width="28" height="42" rx="1.5" fill="url(#ct-tube)" stroke="#2B1810" stroke-width="0.8"/>
-            <rect x="34" y="56" width="28" height="2" fill="#2B1810" opacity="0.3"/>
-            <path d="M37 42 L37 22 Q37 16 48 14 Q59 16 59 22 L59 42 Z" fill="url(#ct-bullet)" stroke="#2B1810" stroke-width="0.8"/>
-            <rect x="38" y="63" width="20" height="16" fill="#FAF6F0" opacity="0.85"/>
-            <text x="48" y="71" font-family="serif" font-size="3.5" font-style="italic" fill="#2B1810" text-anchor="middle">Charlotte Tilbury</text>
-            <text x="48" y="76" font-family="sans-serif" font-size="2.2" font-weight="700" fill="#2B1810" text-anchor="middle" letter-spacing="0.3">PILLOW TALK</text>
-          </svg>
-        </div>
-        <div class="product-info">
-          <div class="brand">Charlotte Tilbury</div>
-          <h3>Matte Revolution Lipstick — Pillow Talk</h3>
-          <div class="meta">
-            <span>3.5g</span>
-            <span class="dot">·</span>
-            <span>Lipstick</span>
-            <span class="dot">·</span>
-            <span>Refillable case option</span>
-          </div>
-        </div>
-        <div class="product-stores">
-          <span class="label">5 retailers</span>
-          <div class="stores-row">
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#000"/><text x="12" y="15" font-family="sans-serif" font-size="7" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.3">TIRA</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FC2779"/><text x="12" y="16" font-family="sans-serif" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#000"/><text x="12" y="9" font-family="sans-serif" font-size="3.5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.2">SEPHORA</text><line x1="4" y1="12" x2="20" y2="12" stroke="#fff" stroke-width="0.4"/><text x="12" y="18" font-family="serif" font-size="4.5" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#F4DCD9"/><text x="12" y="11" font-family="serif" font-size="3.5" font-style="italic" fill="#2B1810" text-anchor="middle">Charlotte</text><text x="12" y="17" font-family="serif" font-size="3.5" font-style="italic" fill="#2B1810" text-anchor="middle">Tilbury</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#1a1a1a"/><text x="12" y="11" font-family="sans-serif" font-size="3.5" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.2">CULT</text><text x="12" y="18" font-family="serif" font-size="4" font-style="italic" fill="#fff" text-anchor="middle">beauty</text></svg></div>
-          </div>
-        </div>
-        <div class="product-price-summary">
-          <div class="from">From</div>
-          <div class="price">₹2,640<span class="expand-icon">▾</span></div>
-          <div class="save">↓ Save ₹1,360 vs highest</div>
-        </div>
-      </div>
-      <div class="product-retailers">
-        <table class="retailer-table">
-          <thead>
-            <tr>
-              <th>Retailer</th>
-              <th>Stock</th>
-              <th>Shipping</th>
-              <th>Perks</th>
-              <th class="right">Price</th>
-              <th class="right"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="retailer-row best">
-              <td>
-                <div class="retailer-cell-name">
-                  <div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="20" font-family="sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">TIRA</text></svg></div>
-                  <div>
-                    <div class="name">Tira <span class="badge">Best</span></div>
-                    <div class="sub">tirabeauty.com</div>
-                  </div>
-                </div>
-              </td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 2-3 days</td>
-              <td><div class="perks"><span class="perk code">TIRA20</span><span class="perk">Free sample</span></div></td>
-              <td class="price-cell">₹2,640</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td>
-                <div class="retailer-cell-name">
-                  <div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FC2779"/><text x="16" y="22" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div>
-                  <div>
-                    <div class="name">Nykaa</div>
-                    <div class="sub">nykaa.com</div>
-                  </div>
-                </div>
-              </td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">₹49 · 3-5 days</td>
-              <td><div class="perks"><span class="perk">Loyalty 5%</span></div></td>
-              <td class="price-cell"><span class="old">₹3,200</span>₹2,880</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td>
-                <div class="retailer-cell-name">
-                  <div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="12" font-family="sans-serif" font-size="5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.3">SEPHORA</text><line x1="6" y1="16" x2="26" y2="16" stroke="#fff" stroke-width="0.6"/><text x="16" y="25" font-family="serif" font-size="6" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg></div>
-                  <div>
-                    <div class="name">Sephora India</div>
-                    <div class="sub">sephora.nnnow.com</div>
-                  </div>
-                </div>
-              </td>
-              <td><span class="stock-tag low">Low stock</span></td>
-              <td class="ship-cell">Free over ₹2k</td>
-              <td><div class="perks"><span class="perk">Insider 10%</span></div></td>
-              <td class="price-cell">₹3,200</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td>
-                <div class="retailer-cell-name">
-                  <div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#F4DCD9"/><text x="16" y="14" font-family="serif" font-size="5" font-style="italic" fill="#2B1810" text-anchor="middle">Charlotte</text><text x="16" y="23" font-family="serif" font-size="5" font-style="italic" fill="#2B1810" text-anchor="middle">Tilbury</text></svg></div>
-                  <div>
-                    <div class="name">Charlotte Tilbury</div>
-                    <div class="sub">charlottetilbury.com/in</div>
-                  </div>
-                </div>
-              </td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 4-6 days</td>
-              <td><div class="perks"><span class="perk">Refill option</span><span class="perk">2 samples</span></div></td>
-              <td class="price-cell">₹3,400</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td>
-                <div class="retailer-cell-name">
-                  <div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#1a1a1a"/><text x="16" y="14" font-family="sans-serif" font-size="5" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.3">CULT</text><text x="16" y="24" font-family="serif" font-size="5.5" font-style="italic" fill="#fff" text-anchor="middle">beauty</text></svg></div>
-                  <div>
-                    <div class="name">Cult Beauty (intl)</div>
-                    <div class="sub">cultbeauty.com</div>
-                  </div>
-                </div>
-              </td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">+₹890 import</td>
-              <td><div class="perks"><span class="perk code">FIRST15</span></div></td>
-              <td class="price-cell">₹4,000</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PRODUCT 2: La Roche-Posay -->
-    <div class="product-card">
-      <div class="product-summary">
-        <div class="product-img bg-bone">
-          <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="lrp" x1="0" x2="1" y1="0" y2="0">
-                <stop offset="0" stop-color="#A87850"/>
-                <stop offset="0.5" stop-color="#FAF6F0"/>
-                <stop offset="1" stop-color="#A87850"/>
-              </linearGradient>
-            </defs>
-            <rect x="32" y="22" width="32" height="56" rx="3" fill="url(#lrp)" stroke="#2B1810" stroke-width="0.8"/>
-            <rect x="38" y="14" width="20" height="10" rx="1.5" fill="#2B1810"/>
-            <rect x="36" y="34" width="24" height="32" fill="#fff" opacity="0.95" stroke="#2B1810" stroke-width="0.4"/>
-            <text x="48" y="44" font-family="sans-serif" font-size="3.5" font-weight="700" fill="#1A4A8F" text-anchor="middle">LA ROCHE</text>
-            <text x="48" y="49" font-family="sans-serif" font-size="3.5" font-weight="700" fill="#1A4A8F" text-anchor="middle">POSAY</text>
-            <line x1="40" y1="51" x2="56" y2="51" stroke="#2B1810" stroke-width="0.3"/>
-            <text x="48" y="57" font-family="sans-serif" font-size="3" font-weight="600" fill="#2B1810" text-anchor="middle">ANTHELIOS</text>
-            <text x="48" y="62" font-family="sans-serif" font-size="4" font-weight="900" fill="#C7956D" text-anchor="middle">SPF 50+</text>
-          </svg>
-        </div>
-        <div class="product-info">
-          <div class="brand">La Roche-Posay</div>
-          <h3>Anthelios UVMune 400 SPF50+ Fluid</h3>
-          <div class="meta">
-            <span>50ml</span>
-            <span class="dot">·</span>
-            <span>Sunscreen</span>
-            <span class="dot">·</span>
-            <span>Fragrance-free</span>
-          </div>
-        </div>
-        <div class="product-stores">
-          <span class="label">5 retailers</span>
-          <div class="stores-row">
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FF1493"/><text x="12" y="16" font-family="sans-serif" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">LF</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FC2779"/><text x="12" y="16" font-family="sans-serif" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#000"/><text x="12" y="15" font-family="sans-serif" font-size="7" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.3">TIRA</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#1A4A8F"/><text x="12" y="15" font-family="sans-serif" font-size="6" font-weight="700" fill="#fff" text-anchor="middle">APOLLO</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><text x="12" y="11" font-family="sans-serif" font-size="3" font-weight="700" fill="#1A4A8F" text-anchor="middle">LA ROCHE</text><text x="12" y="17" font-family="sans-serif" font-size="3" font-weight="700" fill="#1A4A8F" text-anchor="middle">POSAY</text></svg></div>
-          </div>
-        </div>
-        <div class="product-price-summary">
-          <div class="from">From</div>
-          <div class="price">₹1,449<span class="expand-icon">▾</span></div>
-          <div class="save">↓ Save ₹650 vs highest</div>
-        </div>
-      </div>
-      <div class="product-retailers">
-        <table class="retailer-table">
-          <thead><tr><th>Retailer</th><th>Stock</th><th>Shipping</th><th>Perks</th><th class="right">Price</th><th class="right"></th></tr></thead>
-          <tbody>
-            <tr class="retailer-row best">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FF1493"/><text x="16" y="22" font-family="sans-serif" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">LF</text></svg></div><div><div class="name">Lookfantastic <span class="badge">Best</span></div><div class="sub">lookfantastic.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 5-7 days</td>
-              <td><div class="perks"><span class="perk code">LF15</span><span class="perk">3 samples</span></div></td>
-              <td class="price-cell"><span class="old">₹1,890</span>₹1,449</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FC2779"/><text x="16" y="22" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div><div><div class="name">Nykaa</div><div class="sub">nykaa.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free over ₹1k</td>
-              <td><div class="perks"><span class="perk">Loyalty pts</span></div></td>
-              <td class="price-cell">₹1,690</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="20" font-family="sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">TIRA</text></svg></div><div><div class="name">Tira</div><div class="sub">tirabeauty.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 2-3 days</td>
-              <td><div class="perks"><span class="perk">Tier discount</span></div></td>
-              <td class="price-cell">₹1,799</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#1A4A8F"/><text x="16" y="20" font-family="sans-serif" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">APOLLO</text></svg></div><div><div class="name">Apollo Pharmacy</div><div class="sub">apollopharmacy.in</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">₹40 · 1-2 days</td>
-              <td><div class="perks"><span class="perk">Authentic</span></div></td>
-              <td class="price-cell">₹1,950</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#fff" stroke="#1A4A8F" stroke-width="1"/><text x="16" y="14" font-family="sans-serif" font-size="4" font-weight="700" fill="#1A4A8F" text-anchor="middle">LA ROCHE</text><text x="16" y="22" font-family="sans-serif" font-size="4" font-weight="700" fill="#1A4A8F" text-anchor="middle">POSAY</text></svg></div><div><div class="name">LRP India</div><div class="sub">laroche-posay.in</div></div></div></td>
-              <td><span class="stock-tag low">Low stock</span></td>
-              <td class="ship-cell">Free over ₹1.5k</td>
-              <td><div class="perks"><span class="perk">Skin consult</span></div></td>
-              <td class="price-cell">₹2,099</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PRODUCT 3: Sol de Janeiro -->
-    <div class="product-card">
-      <div class="product-summary">
-        <div class="product-img bg-caramel">
-          <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="48" cy="60" rx="28" ry="6" fill="#C7956D" stroke="#2B1810" stroke-width="0.8"/>
-            <rect x="20" y="32" width="56" height="28" fill="#E8B86A" stroke="#2B1810" stroke-width="0.8"/>
-            <ellipse cx="48" cy="32" rx="28" ry="6" fill="#2B1810" stroke="#2B1810" stroke-width="0.8"/>
-            <ellipse cx="48" cy="30" rx="28" ry="5" fill="#3F2B20"/>
-            <rect x="26" y="38" width="44" height="18" fill="#FAF6F0" opacity="0.92"/>
-            <text x="48" y="44" font-family="serif" font-size="3" font-weight="700" fill="#A87850" text-anchor="middle" letter-spacing="0.4">SOL DE JANEIRO</text>
-            <text x="48" y="50" font-family="sans-serif" font-size="4" font-weight="900" fill="#2B1810" text-anchor="middle">Bum Bum Cream</text>
-            <text x="48" y="55" font-family="sans-serif" font-size="2.2" fill="#2B1810" text-anchor="middle">240 ml</text>
-          </svg>
-        </div>
-        <div class="product-info">
-          <div class="brand">Sol de Janeiro</div>
-          <h3>Brazilian Bum Bum Cream</h3>
-          <div class="meta">
-            <span>240ml</span>
-            <span class="dot">·</span>
-            <span>Body cream</span>
-            <span class="dot">·</span>
-            <span>Vegan</span>
-          </div>
-        </div>
-        <div class="product-stores">
-          <span class="label">5 retailers</span>
-          <div class="stores-row">
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#1a1a1a"/><text x="12" y="11" font-family="sans-serif" font-size="3.5" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.2">CULT</text><text x="12" y="18" font-family="serif" font-size="4" font-style="italic" fill="#fff" text-anchor="middle">beauty</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#000"/><text x="12" y="9" font-family="sans-serif" font-size="3.5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.2">SEPHORA</text><line x1="4" y1="12" x2="20" y2="12" stroke="#fff" stroke-width="0.4"/><text x="12" y="18" font-family="serif" font-size="4.5" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FC2779"/><text x="12" y="16" font-family="sans-serif" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FFE08A"/><text x="12" y="11" font-family="serif" font-size="3.5" font-weight="700" fill="#A87850" text-anchor="middle">SOL</text><text x="12" y="20" font-family="serif" font-size="3.5" font-weight="700" fill="#2B1810" text-anchor="middle">JANEIRO</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FF1493"/><text x="12" y="16" font-family="sans-serif" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">LF</text></svg></div>
-          </div>
-        </div>
-        <div class="product-price-summary">
-          <div class="from">From</div>
-          <div class="price">₹3,200<span class="expand-icon">▾</span></div>
-          <div class="save">↓ Save ₹1,500 vs highest</div>
-        </div>
-      </div>
-      <div class="product-retailers">
-        <table class="retailer-table">
-          <thead><tr><th>Retailer</th><th>Stock</th><th>Shipping</th><th>Perks</th><th class="right">Price</th><th class="right"></th></tr></thead>
-          <tbody>
-            <tr class="retailer-row best">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#1a1a1a"/><text x="16" y="14" font-family="sans-serif" font-size="5" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.3">CULT</text><text x="16" y="24" font-family="serif" font-size="5.5" font-style="italic" fill="#fff" text-anchor="middle">beauty</text></svg></div><div><div class="name">Cult Beauty <span class="badge">Best</span></div><div class="sub">cultbeauty.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free over ₹3k</td>
-              <td><div class="perks"><span class="perk code">CULT20</span><span class="perk">2 samples</span></div></td>
-              <td class="price-cell"><span class="old">₹4,700</span>₹3,200</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="12" font-family="sans-serif" font-size="5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.3">SEPHORA</text><line x1="6" y1="16" x2="26" y2="16" stroke="#fff" stroke-width="0.6"/><text x="16" y="25" font-family="serif" font-size="6" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg></div><div><div class="name">Sephora India</div><div class="sub">sephora.nnnow.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free over ₹2k</td>
-              <td><div class="perks"><span class="perk">Insider 10%</span></div></td>
-              <td class="price-cell">₹3,800</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FC2779"/><text x="16" y="22" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div><div><div class="name">Nykaa Luxe</div><div class="sub">luxe.nykaa.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 2-4 days</td>
-              <td><div class="perks"><span class="perk">Prive members</span></div></td>
-              <td class="price-cell">₹3,950</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FFE08A"/><text x="16" y="14" font-family="serif" font-size="5" font-weight="700" fill="#A87850" text-anchor="middle">SOL DE</text><text x="16" y="25" font-family="serif" font-size="5" font-weight="700" fill="#2B1810" text-anchor="middle">JANEIRO</text></svg></div><div><div class="name">Sol de Janeiro</div><div class="sub">soldejaneiro.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free over ₹2.5k</td>
-              <td><div class="perks"><span class="perk">Travel mini</span></div></td>
-              <td class="price-cell">₹4,200</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FF1493"/><text x="16" y="22" font-family="sans-serif" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">LF</text></svg></div><div><div class="name">Lookfantastic</div><div class="sub">lookfantastic.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">+₹450 ship</td>
-              <td><div class="perks"><span class="perk code">LF15</span></div></td>
-              <td class="price-cell">₹4,700</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PRODUCT 4: Olaplex -->
-    <div class="product-card">
-      <div class="product-summary">
-        <div class="product-img bg-sage">
-          <svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 30 30 Q 30 22 36 20 L 60 20 Q 66 22 66 30 L 66 80 Q 66 84 60 84 L 36 84 Q 30 84 30 80 Z" fill="#FAF6F0" stroke="#2B1810" stroke-width="0.8"/>
-            <rect x="40" y="14" width="16" height="6" rx="1" fill="#FAF6F0" stroke="#2B1810" stroke-width="0.8"/>
-            <rect x="34" y="36" width="28" height="38" fill="#fff" stroke="#2B1810" stroke-width="0.4"/>
-            <text x="48" y="44" font-family="sans-serif" font-size="5" font-weight="900" fill="#2B1810" text-anchor="middle" letter-spacing="0.4">OLAPLEX</text>
-            <line x1="38" y1="46" x2="58" y2="46" stroke="#2B1810" stroke-width="0.3"/>
-            <text x="48" y="60" font-family="sans-serif" font-size="14" font-weight="900" fill="#2B1810" text-anchor="middle">N°3</text>
-            <text x="48" y="68" font-family="sans-serif" font-size="2.5" font-weight="600" fill="#2B1810" text-anchor="middle">HAIR PERFECTOR</text>
-          </svg>
-        </div>
-        <div class="product-info">
-          <div class="brand">Olaplex</div>
-          <h3>No. 3 Hair Perfector — Bond Repair</h3>
-          <div class="meta">
-            <span>100ml</span>
-            <span class="dot">·</span>
-            <span>Hair treatment</span>
-            <span class="dot">·</span>
-            <span>Color-safe</span>
-          </div>
-        </div>
-        <div class="product-stores">
-          <span class="label">5 retailers</span>
-          <div class="stores-row">
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#1a1a1a"/><text x="12" y="11" font-family="sans-serif" font-size="3.5" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.2">CULT</text><text x="12" y="18" font-family="serif" font-size="4" font-style="italic" fill="#fff" text-anchor="middle">beauty</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#000"/><text x="12" y="15" font-family="sans-serif" font-size="7" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.3">TIRA</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#000"/><text x="12" y="9" font-family="sans-serif" font-size="3.5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.2">SEPHORA</text><line x1="4" y1="12" x2="20" y2="12" stroke="#fff" stroke-width="0.4"/><text x="12" y="18" font-family="serif" font-size="4.5" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FC2779"/><text x="12" y="16" font-family="sans-serif" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div>
-            <div class="store-pip"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FAF6F0"/><text x="12" y="11" font-family="sans-serif" font-size="4" font-weight="900" fill="#2B1810" text-anchor="middle" letter-spacing="0.3">OLAPLEX</text><text x="12" y="20" font-family="sans-serif" font-size="7" font-weight="900" fill="#2B1810" text-anchor="middle">N°3</text></svg></div>
-          </div>
-        </div>
-        <div class="product-price-summary">
-          <div class="from">From</div>
-          <div class="price">₹1,920<span class="expand-icon">▾</span></div>
-          <div class="save">↓ Save ₹880 vs highest</div>
-        </div>
-      </div>
-      <div class="product-retailers">
-        <table class="retailer-table">
-          <thead><tr><th>Retailer</th><th>Stock</th><th>Shipping</th><th>Perks</th><th class="right">Price</th><th class="right"></th></tr></thead>
-          <tbody>
-            <tr class="retailer-row best">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#1a1a1a"/><text x="16" y="14" font-family="sans-serif" font-size="5" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.3">CULT</text><text x="16" y="24" font-family="serif" font-size="5.5" font-style="italic" fill="#fff" text-anchor="middle">beauty</text></svg></div><div><div class="name">Cult Beauty <span class="badge">Best</span></div><div class="sub">cultbeauty.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free over ₹3k</td>
-              <td><div class="perks"><span class="perk code">FIRST15</span><span class="perk">Bundle save</span></div></td>
-              <td class="price-cell"><span class="old">₹2,400</span>₹1,920</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="20" font-family="sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">TIRA</text></svg></div><div><div class="name">Tira</div><div class="sub">tirabeauty.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 2-3 days</td>
-              <td><div class="perks"><span class="perk">Bundle 1+2+3</span></div></td>
-              <td class="price-cell">₹2,150</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="12" font-family="sans-serif" font-size="5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.3">SEPHORA</text><line x1="6" y1="16" x2="26" y2="16" stroke="#fff" stroke-width="0.6"/><text x="16" y="25" font-family="serif" font-size="6" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg></div><div><div class="name">Sephora India</div><div class="sub">sephora.nnnow.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free · 3-5 days</td>
-              <td><div class="perks"><span class="perk">Insider</span></div></td>
-              <td class="price-cell">₹2,400</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FC2779"/><text x="16" y="22" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg></div><div><div class="name">Nykaa</div><div class="sub">nykaa.com</div></div></div></td>
-              <td><span class="stock-tag in">In stock</span></td>
-              <td class="ship-cell">Free over ₹1k</td>
-              <td><div class="perks"><span class="perk">Loyalty 5%</span></div></td>
-              <td class="price-cell">₹2,500</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-            <tr class="retailer-row">
-              <td><div class="retailer-cell-name"><div class="retailer-logo"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FAF6F0" stroke="#2B1810" stroke-width="0.5"/><text x="16" y="14" font-family="sans-serif" font-size="5" font-weight="900" fill="#2B1810" text-anchor="middle" letter-spacing="0.3">OLAPLEX</text><text x="16" y="24" font-family="sans-serif" font-size="9" font-weight="900" fill="#2B1810" text-anchor="middle">N°3</text></svg></div><div><div class="name">Olaplex India</div><div class="sub">olaplex.com</div></div></div></td>
-              <td><span class="stock-tag low">Low stock</span></td>
-              <td class="ship-cell">₹99 · 4-6 days</td>
-              <td><div class="perks"><span class="perk">Authentic</span></div></td>
-              <td class="price-cell">₹2,800</td>
-              <td class="go-cell"><a href="#" class="go-btn">Visit store →</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -2310,7 +1967,7 @@
         <div class="num">i.</div>
         <div>
           <h4>Wishlist tracking</h4>
-          <p>Add anything to your list and we'll watch it across all 240+ retailers — no need to refresh, refresh, refresh.</p>
+          <p>Add anything to your list and we'll watch it across Nykaa, Tira and Sephora — no need to refresh, refresh, refresh.</p>
         </div>
       </div>
       <div class="alerts-feature">
@@ -2335,8 +1992,8 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <a href="#" class="logo">Saiko</a>
-      <p>The independent beauty price index for India. Live across 240+ retailers, updated every 4 hours. Bombay · Established 2026.</p>
+      <a href="#" class="logo">Vanity Scan</a>
+      <p>The independent beauty price index for India. Live across Nykaa, Tira and Sephora, with the age of every price shown. Bombay · Established 2026.</p>
     </div>
     <div class="footer-col">
       <h5>Browse</h5>
@@ -2347,7 +2004,7 @@
       <a href="#">Body &amp; tools</a>
     </div>
     <div class="footer-col">
-      <h5>Saiko</h5>
+      <h5>Vanity Scan</h5>
       <a href="#">How we make money</a>
       <a href="#">Editorial standards</a>
       <a href="#">Retailers we track</a>
@@ -2362,7 +2019,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Saiko Index Pvt. Ltd.</span>
+    <span>© 2026 Vanity Scan Index Pvt. Ltd.</span>
     <span>Privacy · Terms · Cookies</span>
   </div>
 </footer>
@@ -2384,7 +2041,7 @@
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
     <div class="modal-eyebrow">Welcome back</div>
-    <h3>Log in to <span class="italic">Saiko</span></h3>
+    <h3>Log in to <span class="italic">Vanity Scan</span></h3>
     <p class="lead">Save your wishlist, set price alerts, and get the weekly drops in your inbox.</p>
     <form onsubmit="event.preventDefault();this.querySelector('button.modal-submit').textContent='✓ Logged in';">
       <div class="modal-field">
@@ -2406,7 +2063,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
       Continue with Apple
     </button>
-    <div class="modal-foot">New to Saiko? <a href="#">Create an account</a></div>
+    <div class="modal-foot">New to Vanity Scan? <a href="#">Create an account</a></div>
   </div>
 </div>
 
@@ -2528,7 +2185,7 @@
 
     const stages=[
       {pct:18,msg:'Querying retailer index'},
-      {pct:42,msg:`Fetching prices${query?' for "'+query+'"':' from 240 retailers'}`},
+      {pct:42,msg:`Fetching prices${query?' for "'+query+'"':' from Nykaa, Tira & Sephora'}`},
       {pct:68,msg:'Calculating shipping & active codes'},
       {pct:88,msg:'Verifying stock & authenticity'},
       {pct:100,msg:'Done — sorting by best price'}
@@ -2623,7 +2280,7 @@
 </script>
 
 <!-- ============================================ -->
-<!-- SAIKO BACKEND — Supabase + Search             -->
+<!-- VANITY SCAN BACKEND — Supabase + Search             -->
 <!-- ============================================ -->
 <script>
   const supabaseClient = window.supabase.createClient(
@@ -2637,18 +2294,17 @@
   // ============================================
   // RETAILER SVG LOGOS (fallback if logo_url empty)
   // ============================================
+  // Vanity Scan currently tracks only these three merchants.
+  const ALLOWED_RETAILERS = ['nykaa', 'tira', 'sephora'];
+
   const RETAILER_LOGO_SVG = {
     'nykaa':    '<svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#FC2779"/><text x="16" y="22" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" font-style="italic">N</text></svg>',
     'tira':     '<svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="20" font-family="sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="0.5">TIRA</text></svg>',
-    'flipkart': '<svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#2874F0"/><text x="16" y="14" font-family="sans-serif" font-size="6" font-weight="700" fill="#FFE500" text-anchor="middle">Flipkart</text><text x="16" y="22" font-family="sans-serif" font-size="3" font-style="italic" fill="#fff" text-anchor="middle">Explore Plus</text></svg>',
-    'purplle':  '<svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#8E44CC"/><text x="16" y="20" font-family="sans-serif" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">purplle</text></svg>',
     'sephora':  '<svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><text x="16" y="12" font-family="sans-serif" font-size="4.5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="0.3">SEPHORA</text><line x1="6" y1="15" x2="26" y2="15" stroke="#fff" stroke-width="0.5"/><text x="16" y="23" font-family="serif" font-size="6" font-style="italic" fill="#fff" text-anchor="middle">Beauty</text></svg>'
   };
   const RETAILER_DOMAIN = {
     'nykaa': 'nykaa.com',
     'tira': 'tirabeauty.com',
-    'flipkart': 'flipkart.com',
-    'purplle': 'purplle.com',
     'sephora': 'sephora.nnnow.com'
   };
 
@@ -2661,18 +2317,139 @@
   }
 
   // ============================================
+  // DATA FRESHNESS HELPERS  [#3]
+  // ============================================
+  // Human-friendly "how long ago" string from a timestamp.
+  function timeAgo(dateStr) {
+    if (!dateStr) return 'unknown';
+    const then = new Date(dateStr).getTime();
+    if (isNaN(then)) return 'unknown';
+    const secs = Math.max(0, Math.floor((Date.now() - then) / 1000));
+    if (secs < 60) return 'just now';
+    const mins = Math.floor(secs / 60);
+    if (mins < 60) return `${mins} min ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hr${hrs === 1 ? '' : 's'} ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 7) return `${days} day${days === 1 ? '' : 's'} ago`;
+    const weeks = Math.floor(days / 7);
+    if (weeks < 5) return `${weeks} wk${weeks === 1 ? '' : 's'} ago`;
+    const months = Math.floor(days / 30);
+    return `${months} mo ago`;
+  }
+
+  // Bucket a timestamp into fresh / aging / stale for colour coding.
+  function freshnessClass(dateStr) {
+    if (!dateStr) return 'stale';
+    const hrs = (Date.now() - new Date(dateStr).getTime()) / 36e5;
+    if (hrs <= 24) return 'fresh';
+    if (hrs <= 24 * 3) return 'aging';
+    return 'stale';
+  }
+
+  // The most recent check across all of a product's prices — used as the
+  // headline "last updated" for the whole listing.
+  function latestCheck(prices) {
+    const times = (prices || [])
+      .map(pr => pr.last_checked || pr.fetched_at)
+      .filter(Boolean)
+      .map(d => new Date(d).getTime())
+      .filter(t => !isNaN(t));
+    return times.length ? new Date(Math.max(...times)).toISOString() : null;
+  }
+
+  // Build the ordered image list for a product: explicit gallery first,
+  // then the primary image_url, de-duplicated. Falls back to [] (SVG used).
+  function productImages(p) {
+    const list = [];
+    if (Array.isArray(p.image_urls)) list.push(...p.image_urls.filter(Boolean));
+    if (p.image_url && !list.includes(p.image_url)) list.unshift(p.image_url);
+    return [...new Set(list)];
+  }
+
+  // ============================================
+  // GALLERY LIGHTBOX [#5] — view all images for a product, full size
+  // ============================================
+  function openGalleryLightbox(images, startIndex, p) {
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const lbBrand = document.getElementById('lightboxBrand');
+    const lbTitle = document.getElementById('lightboxTitle');
+    const lbMeta = document.getElementById('lightboxMeta');
+    if (!lb || !lbImg) return;
+
+    let idx = startIndex >= 0 && startIndex < images.length ? startIndex : 0;
+
+    const navHTML = images.length > 1
+      ? `<button type="button" class="lightbox-nav prev" aria-label="Previous image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+         <button type="button" class="lightbox-nav next" aria-label="Next image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>`
+      : '';
+
+    function render() {
+      lbImg.style.background = '';
+      lbImg.innerHTML = `<img class="lb-main" src="${images[idx]}" alt="${p.name}"/>${navHTML}`;
+      // re-wire nav each render (innerHTML replaced)
+      const prev = lbImg.querySelector('.lightbox-nav.prev');
+      const next = lbImg.querySelector('.lightbox-nav.next');
+      if (prev) prev.addEventListener('click', (e) => { e.stopPropagation(); idx = (idx - 1 + images.length) % images.length; render(); });
+      if (next) next.addEventListener('click', (e) => { e.stopPropagation(); idx = (idx + 1) % images.length; render(); });
+      // active thumb state
+      lb.querySelectorAll('.lightbox-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+    }
+
+    // Thumbnail strip below the image (only when multiple)
+    let thumbStrip = lb.querySelector('.lightbox-thumbs');
+    if (thumbStrip) thumbStrip.remove();
+    if (images.length > 1) {
+      thumbStrip = document.createElement('div');
+      thumbStrip.className = 'lightbox-thumbs';
+      thumbStrip.innerHTML = images.map((src, i) =>
+        `<button type="button" class="lightbox-thumb" data-idx="${i}"><img src="${src}" alt=""/></button>`
+      ).join('');
+      lbImg.insertAdjacentElement('afterend', thumbStrip);
+      thumbStrip.querySelectorAll('.lightbox-thumb').forEach(t => {
+        t.addEventListener('click', (e) => { e.stopPropagation(); idx = Number(t.dataset.idx) || 0; render(); });
+      });
+    }
+
+    if (lbBrand) lbBrand.textContent = p.brand || '';
+    if (lbTitle) lbTitle.textContent = p.name || '';
+    if (lbMeta) {
+      const bits = [p.size, p.category].filter(Boolean);
+      lbMeta.innerHTML = bits.map((b, i) => `${i ? '<span class="dot">·</span>' : ''}<span>${b}</span>`).join('');
+    }
+
+    render();
+
+    // Keyboard navigation while open
+    function onKey(e) {
+      if (!lb.classList.contains('open')) { document.removeEventListener('keydown', onKey); return; }
+      if (e.key === 'ArrowLeft' && images.length > 1) { idx = (idx - 1 + images.length) % images.length; render(); }
+      else if (e.key === 'ArrowRight' && images.length > 1) { idx = (idx + 1) % images.length; render(); }
+      else if (e.key === 'Escape') { lb.classList.remove('open'); document.body.style.overflow=''; document.removeEventListener('keydown', onKey); }
+    }
+    document.addEventListener('keydown', onKey);
+
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // ============================================
   // LOAD PRODUCTS FROM SUPABASE
   // ============================================
   async function loadProducts() {
+    // Only count the merchants we actively track.
     const { count: retailerCount } = await supabaseClient
       .from('retailers')
-      .select('*', { count: 'exact', head: true });
-    RETAILER_COUNT = retailerCount || 0;
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .in('slug', ALLOWED_RETAILERS);
+    RETAILER_COUNT = retailerCount || ALLOWED_RETAILERS.length;
 
     const { data: products, error } = await supabaseClient
       .from('products')
       .select(`
-        id, brand, name, category, size, image_url, is_trending, is_drop,
+        id, brand, name, category, size, image_url, image_urls, is_trending, is_drop,
         prices (
           current_price,
           was_price,
@@ -2680,7 +2457,9 @@
           in_stock,
           shipping_cost,
           promo_code,
-          retailers ( name, slug, logo_url )
+          last_checked,
+          fetched_at,
+          retailers ( name, slug, logo_url, is_active )
         )
       `);
 
@@ -2695,14 +2474,25 @@
       if (c) c.innerHTML = '<strong>No products in database yet</strong>';
       return;
     }
-    console.log('✓ Products loaded:', products);
+
+    // Keep only prices from the three active merchants, then drop products
+    // that have no qualifying price left.
+    products.forEach(p => {
+      p.prices = (p.prices || []).filter(pr =>
+        pr.retailers &&
+        pr.retailers.is_active !== false &&
+        ALLOWED_RETAILERS.includes(pr.retailers.slug)
+      );
+    });
+    const usable = products.filter(p => p.prices && p.prices.length > 0);
+    console.log('✓ Products loaded:', usable);
 
     const loadingStatus = document.getElementById('loadingStatus');
     const loadingBar = document.getElementById('loadingBar');
     if (loadingStatus) loadingStatus.style.display = 'none';
     if (loadingBar) loadingBar.style.display = 'none';
 
-    ALL_PRODUCTS = products;
+    ALL_PRODUCTS = usable;
     populateCategoryDropdown();
     populateCategoryGrid();           // [#3]
     renderInitialView();              // [#2] show only trending
@@ -2830,9 +2620,19 @@
     card.className = 'product-card open from-db';
     card.dataset.productId = p.id;
 
-    const imgHTML = p.image_url
-      ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/>`
+    // [#5] IMAGE GALLERY — one or more images per product
+    const images = productImages(p);
+    const mainHTML = images.length
+      ? `<img class="gallery-main-img" src="${images[0]}" alt="${p.name}" loading="lazy"/>`
       : defaultProductImage(p.brand, p.name);
+    const thumbsHTML = images.length > 1
+      ? `<div class="product-thumbs">` + images.map((src, idx) =>
+          `<button type="button" class="product-thumb${idx === 0 ? ' active' : ''}" data-idx="${idx}" aria-label="View image ${idx + 1} of ${images.length}"><img src="${src}" alt="" loading="lazy"/></button>`
+        ).join('') + `</div>`
+      : '';
+
+    // [#3] product-level freshness = most recent check across retailers
+    const freshest = latestCheck(sorted);
 
     const pipsHTML = sorted.map(price => {
       const slug = price.retailers.slug;
@@ -2871,6 +2671,7 @@
               <div>
                 <div class="name">${price.retailers.name}${isBest ? ' <span class="badge">Best</span>' : ''}</div>
                 <div class="sub">${domain}</div>
+                <div class="checked ${freshnessClass(price.last_checked || price.fetched_at)}">⟳ checked ${timeAgo(price.last_checked || price.fetched_at)}</div>
               </div>
             </div>
           </td>
@@ -2884,7 +2685,10 @@
 
     card.innerHTML = `
       <div class="product-summary">
-        <div class="product-img bg-brick">${imgHTML}</div>
+        <div class="product-gallery">
+          <div class="product-img bg-brick">${mainHTML}<div class="zoom-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/><path d="m21 21-4.3-4.3"/></svg></div></div>
+          ${thumbsHTML}
+        </div>
         <div class="product-info">
           <div class="brand">${p.brand}${isTrendingTag ? ' <span style="font-size:10px;color:var(--accent);margin-left:8px;letter-spacing:1.5px;">TRENDING</span>' : ''}</div>
           <h3>${p.name}</h3>
@@ -2892,6 +2696,7 @@
             <span>${p.size || ''}</span>
             ${p.size && p.category ? '<span class="dot">·</span>' : ''}
             <span>${p.category || ''}</span>
+            ${freshest ? `<span class="freshness ${freshnessClass(freshest)}" title="Most recent price check across retailers">⟳ Updated ${timeAgo(freshest)}</span>` : ''}
           </div>
         </div>
         <div class="product-stores">
@@ -2919,6 +2724,36 @@
         </table>
       </div>
     `;
+
+    // ── Gallery wiring [#5] ──
+    const galleryEl = card.querySelector('.product-gallery');
+    const mainImgEl = card.querySelector('.gallery-main-img');
+    if (galleryEl && mainImgEl && images.length) {
+      // Thumbnails swap the main image
+      galleryEl.querySelectorAll('.product-thumb').forEach(thumb => {
+        thumb.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = Number(thumb.dataset.idx) || 0;
+          mainImgEl.src = images[idx];
+          galleryEl.querySelectorAll('.product-thumb').forEach(t => t.classList.remove('active'));
+          thumb.classList.add('active');
+        });
+      });
+      // Main image opens the gallery lightbox at the current image
+      card.querySelector('.product-img').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const current = images.indexOf(mainImgEl.src) >= 0 ? images.indexOf(mainImgEl.src) : 0;
+        openGalleryLightbox(images, current, p);
+      });
+    }
+
+    // ── Expand / collapse (DB cards manage their own toggle) ──
+    const summaryEl = card.querySelector('.product-summary');
+    summaryEl.addEventListener('click', (e) => {
+      if (e.target.closest('.product-gallery')) return; // image clicks handled above
+      card.classList.toggle('open');
+    });
+
     return card;
   }
 
