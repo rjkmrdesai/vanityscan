@@ -28,7 +28,8 @@
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
+  img{max-width:100%;}
   body{
     background:var(--bone);
     color:var(--ink);
@@ -1454,6 +1455,9 @@
     .product-thumb{width:20px;height:20px;border-radius:5px;}
     .product-info .meta{gap:8px 10px;}
     .product-info .meta .freshness{font-size:9px;padding:1px 6px;}
+    .product-img .zoom-hint{width:22px;height:22px;top:5px;right:5px;}
+    .product-img .zoom-hint svg{width:11px;height:11px;}
+    .product-thumbs{gap:5px;}
     .product-info h3{font-size:16px;margin-bottom:4px;}
     .product-info .brand{font-size:9px;}
     .product-info .meta{font-size:12px;gap:10px;}
@@ -1501,40 +1505,44 @@
       border:none;
       display:block;
     }
+    /* Row 1: retailer (logo + name + freshness) spans full width */
     .retailer-table tbody tr td:nth-child(1){
       grid-column:1/-1;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
     }
+    /* Row 2: stock (left) · shipping (right) */
     .retailer-table tbody tr td:nth-child(2){
       grid-column:1;
-      display:block !important;
+      align-self:center;
     }
     .retailer-table tbody tr td:nth-child(3){
       grid-column:2;
-      display:block !important;
+      display:block;
       text-align:right;
       font-size:12px;
+      color:var(--ink-dim);
+      align-self:center;
     }
+    /* Row 3: price (left) · visit-store button (right) */
     .retailer-table tbody tr td:nth-child(4){
-      grid-column:1/-1;
-      display:block !important;
-      padding-top:4px;
-    }
-    .retailer-table tbody tr td:nth-child(5){
       grid-column:1;
       align-self:center;
       font-size:20px;
+      font-weight:600;
     }
-    .retailer-table tbody tr td:nth-child(6){
+    .retailer-table tbody tr td:nth-child(4) .old{font-size:13px;font-weight:400;margin-right:6px;}
+    .retailer-table tbody tr td:nth-child(5){
       grid-column:2;
+      text-align:right;
       align-self:center;
     }
-    .go-btn{padding:9px 14px;font-size:11px;}
+    .go-btn{padding:9px 14px;font-size:11px;white-space:nowrap;}
+    .stock-tag{white-space:nowrap;}
+    .retailer-cell-name{display:flex;align-items:center;gap:10px;}
     .retailer-cell-name .sub{display:block;font-size:10px;}
+    .retailer-cell-name .checked{font-size:9px;margin-top:2px;}
 
     .trending-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .category-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
     .trending-card{border-radius:12px;}
     .trending-card .body{padding:12px;}
     .trending-card h4{font-size:15px;margin-bottom:6px;}
